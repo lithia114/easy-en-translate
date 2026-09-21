@@ -1,0 +1,55 @@
+# ============================================================
+#  .gitattributes —— 换行符规则
+# ============================================================
+#
+# ⚠️ 这个文件看着不起眼，但它防的是我们真踩过的一个坑。
+#
+# 【为什么需要它】
+#
+# 我们做过一个「启动翻译代理.cmd」，最初写的时候换行符是 LF（Linux 风格）。
+# 结果在 Windows 上双击，黑窗口一闪而过 —— 因为 cmd.exe 只认 CRLF，
+# 遇到 LF 会把一行命令从中间截断：
+#
+#     node dsh-translate-proxy.js      ← 原本想执行这个
+#     'sh-translate-proxy.js' is not recognized...   ← 实际被切成了这样
+#
+# 排查了很久才发现是换行符问题。
+#
+# 所以这里明确规定：
+#   · 批处理文件（.cmd/.bat）必须是 CRLF —— 改了就会坏
+#   · 代码和文档统一用 LF —— 跨平台一致
+#
+# 有了这个文件，git 在 checkout 时会自动用正确的换行符，
+# 不管在谁的电脑上、不管 git 的全局设置是什么。
+# ============================================================
+
+
+# 让 git 自动识别文本文件
+* text=auto
+
+
+# ---- 代码与文档：统一 LF ----
+*.js        text eol=lf
+*.user.js   text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+.gitignore  text eol=lf
+.gitattributes text eol=lf
+
+
+# ---- Windows 批处理：必须 CRLF（千万不要改成 lf！）----
+*.cmd       text eol=crlf
+*.bat       text eol=crlf
+*.ps1       text eol=crlf
+
+
+# ---- 二进制文件：不要做任何转换 ----
+*.zip       binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.exe       binary
